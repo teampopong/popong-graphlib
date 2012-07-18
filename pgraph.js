@@ -71,12 +71,12 @@ PG.data.People = function (data) {
     return events;
 };
 
-PG.graph.Timeline = function(target, width, height, options) {
-    return new Timeline(target, width, height, options);
+PG.graph.Timeline = function(target, width, height) {
+    return new Timeline(target, width, height);
 };
 
 
-function Timeline(target, width, height, options) {
+function Timeline(target, width, height) {
     this.width = width;
     this.height = height;
     this.svg = d3.select(target).append('svg')
@@ -90,70 +90,82 @@ Timeline.prototype = {
     BAR_HEIGHT: 30,
     EVENT_R: 4,
 
-    render: function (data, options) {
-        var that = this,
+    render: function (data) {
+        var minX = d3.min(data, function (d) { return d[1]; }),
+            maxX = d3.max(data, function (d) { return d[2]; }),
             events = data.filter(function (d) { return d[0] === PG.EVENT; }),
-            intervals = data.filter(function (d) { return d[0] === PG.INTERVAL; }),
-            xScale = d3.scale.linear().nice()
-                        .domain([d3.min(data, function (d) { return d[1]; }) - PG.YEAR,
-                                 d3.max(data, function (d) { return d[2]; }) + PG.YEAR])
-                        .rangeRound([that.PADDING, this.width - that.PADDING]),
-            yScale = d3.scale.linear().nice()
+            intervals = data.filter(function (d) { return d[0] === PG.INTERVAL; });
+
+        this.xScale = d3.scale.linear().nice()
+                        .domain([minX - PG.YEAR, maxX + PG.YEAR])
+                        .rangeRound([this.PADDING, this.width - this.PADDING]),
+        this.yScale = d3.scale.linear().nice()
                         .domain([0, this.height])
-                        .rangeRound([that.PADDING, this.height - that.PADDING]);
+                        .rangeRound([this.PADDING, this.height - this.PADDING]);
 
-        // Intervals
-        this.svg.selectAll('rect')
-            .data(intervals)
-            .enter()
-            .append('rect')
-            .classed('interval', true)
-            .attr('x', function (d) {
-                return xScale(d[1]) - 0.5;
-            })
-            .attr('y', function (d) {
-                return yScale(that.height / 2) + 0.5;
-            })
-            .attr('width', function (d) {
-                return xScale(d[2]) - xScale(d[1]);
-            })
-            .attr('height', that.BAR_HEIGHT);
+        this.renderIntervals(intervals);
+        this.renderEvents(events);
+        this.renderLabels(data);
+        this.renderAxis();
+    },
 
-        // Events
+    renderEvents: function (data) {
+        var that = this;
         this.svg.selectAll('line')
-            .data(events)
+            .data(data)
             .enter()
             .append('line')
             .classed('event', true)
             .attr('x1', function (d) {
-                return xScale(d[1]) - 0.5;
+                return that.xScale(d[1]) - 0.5;
             })
             .attr('y1', function (d) {
-                return yScale(that.BAR_HEIGHT / 2);
+                return that.yScale(that.BAR_HEIGHT / 2);
             })
             .attr('x2', function (d) {
-                return xScale(d[1]) - 0.5;
+                return that.xScale(d[1]) - 0.5;
             })
             .attr('y2', function (d) {
-                return yScale(that.height);
+                return that.yScale(that.height);
             });
 
         // Events
         this.svg.selectAll('circle')
-            .data(events)
+            .data(data)
             .enter()
             .append('circle')
             .classed('event', true)
             .attr('cx', function (d) {
-                return xScale(d[1]) - 0.5;
+                return that.xScale(d[1]) - 0.5;
             })
             .attr('cy', function (d) {
-                return yScale(that.height) - 0.5;
+                return that.yScale(that.height) - 0.5;
             })
             .attr('r', that.EVENT_R)
             .attr('stroke-width', 1);
+    },
 
-        // Labels
+    renderIntervals: function (data) {
+        var that = this;
+        this.svg.selectAll('rect')
+            .data(data)
+            .enter()
+            .append('rect')
+            .classed('interval', true)
+            .attr('x', function (d) {
+                return that.xScale(d[1]) - 0.5;
+            })
+            .attr('y', function (d) {
+                return that.yScale(that.height / 2) + 0.5;
+            })
+            .attr('width', function (d) {
+                return that.xScale(d[2]) - that.xScale(d[1]);
+            })
+            .attr('height', that.BAR_HEIGHT);
+    },
+
+    renderLabels: function (data) {
+        var that = this;
         this.svg.selectAll("text")
             .data(data)
             .enter()
@@ -163,22 +175,25 @@ Timeline.prototype = {
                 return d[3];
             })
             .attr("x", function (d) {
-                return (xScale(d[2]) + xScale(d[1])) / 2;
+                return (that.xScale(d[2]) + that.xScale(d[1])) / 2;
             })
             .attr("y", function (d) {
                 if (d[0] == PG.EVENT) {
-                    return yScale(0);
+                    return that.yScale(0);
                 } else if (d[0] == PG.INTERVAL) {
-                    return yScale(that.height - that.BAR_HEIGHT / 2);
+                    return that.yScale(that.height - that.BAR_HEIGHT / 2);
                 }
             })
             .style('text-anchor', 'middle');
+    },
 
+    renderAxis: function () {
+        var that = this;
         this.svg.append("g")
             .classed('axis', true)
             .attr('transform', 'translate(0, ' + (that.height - that.PADDING) + ')')
             .call(d3.svg.axis()
-                        .scale(xScale)
+                        .scale(that.xScale)
                         .orient("bottom")
                         .tickFormat(function (d) {
                             return d3.time.format('%Y-%m')(new Date(d));
