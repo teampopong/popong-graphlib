@@ -1,0 +1,61 @@
+{
+  "assembly": {
+    "18": {
+      "education": "\uc11c\uc6b8\ub300\ud559\uad50 \uacbd\uc601\ud559\uacfc \uc878\uc5c5", 
+      "district": "\uc81c\uc8fc\ud2b9\ubcc4\uc790\uce58\ub3c4 \uc911\ub791\uad6c\uc744", 
+      "birthyear": "1962", 
+      "name_kr": "\uc9c4\uc131\ud638", 
+      "voterate": "39.54", 
+      "name_cn": "\u79e6\u8056\u660a", 
+      "experience": [
+        "\uc81c17\ub300 \ub300\ud1b5\ub839\uc120\uac70 \ud55c\ub098\ub77c\ub2f9 \uc911\uc559\uc120\ub300\uc704 \ub274\ubbf8\ub514\uc5b4 \ud300\uc7a5", 
+        "\ub300\ud1b5\ub839\uc9c1 \uc778\uc218\uc704\uc6d0\ud68c \uc804\ubb38\uc704\uc6d0"
+      ], 
+      "sex": "\ub0a8", 
+      "birthmonth": "11", 
+      "job": "\uc815\ub2f9\uc778", 
+      "birthday": "26", 
+      "assembly_no": 18, 
+      "party": "\ud55c\ub098\ub77c\ub2f9", 
+      "votenum": "30983"
+    }, 
+    "19": {
+      "district": "\uc11c\uc6b8\ud2b9\ubcc4\uc2dc \uc911\ub791\uad6c\uc744", 
+      "birthyear": "1962", 
+      "name_kr": "\uc9c4\uc131\ud638", 
+      "image": "http://info.nec.go.kr/photo_20120411/Sd1100/Gsg1107/Sgg2110702/Hb100101642/gicho/100101642.jpg", 
+      "cand_no": "9", 
+      "name_cn": "\u79e6\u8056\u660a", 
+      "experience": [
+        "(\ud604)\uc911\ub791\uc744 \uc9c0\uc5ed\uad6c \uad6d\ud68c\uc758\uc6d0", 
+        "(\ud604)\ud55c\uad6d\uc804\ud654\uacb0\uc81c\uc0b0\uc5c5\ud611\ud68c\uc7a5"
+      ], 
+      "sex": "\ub0a8", 
+      "birthmonth": "11", 
+      "job": "\uad6d\ud68c\uc758\uc6d0", 
+      "birthday": "26", 
+      "address": "\uc11c\uc6b8 \uc911\ub791\uad6c \uc0c1\ubd09\uc911\uc559\ub85c8\uae38", 
+      "party": "\ubb34\uc18c\uc18d", 
+      "education": "\uc11c\uc6b8\ub300\ud559\uad50 \uacbd\uc601\ud559\uacfc \uc878\uc5c5", 
+      "assembly_no": 19
+    }
+  }, 
+  "district": "\uc11c\uc6b8\ud2b9\ubcc4\uc2dc \uc911\ub791\uad6c\uc744", 
+  "birthyear": "1962", 
+  "name_kr": "\uc9c4\uc131\ud638", 
+  "image": "http://info.nec.go.kr/photo_20120411/Sd1100/Gsg1107/Sgg2110702/Hb100101642/gicho/100101642.jpg", 
+  "cand_no": "9", 
+  "name_cn": "\u79e6\u8056\u660a", 
+  "experience": [
+    "(\ud604)\uc911\ub791\uc744 \uc9c0\uc5ed\uad6c \uad6d\ud68c\uc758\uc6d0", 
+    "(\ud604)\ud55c\uad6d\uc804\ud654\uacb0\uc81c\uc0b0\uc5c5\ud611\ud68c\uc7a5"
+  ], 
+  "sex": "\ub0a8", 
+  "birthmonth": "11", 
+  "job": "\uad6d\ud68c\uc758\uc6d0", 
+  "birthday": "26", 
+  "assembly_no": 19, 
+  "party": "\ubb34\uc18c\uc18d", 
+  "education": "\uc11c\uc6b8\ub300\ud559\uad50 \uacbd\uc601\ud559\uacfc \uc878\uc5c5", 
+  "address": "\uc11c\uc6b8 \uc911\ub791\uad6c \uc0c1\ubd09\uc911\uc559\ub85c8\uae38"
+}

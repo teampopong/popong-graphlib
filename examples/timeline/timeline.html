@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>d3 test</title>
+		<script type="text/javascript" src="../../d3.v2.min.js"></script>
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<script type="text/javascript" src="../../pgraph.js"></script>
+		<link type="text/css" rel="stylesheet" href="timeline.css">
+		<link type="application/json" rel="person-data" href="timeline.json">
+	</head>
+	<body>
+		<script>
+			var dataUrl = $('link[rel="person-data"]').attr('href');
+
+			$.getJSON(dataUrl, function (data) {
+				var graph = PG.graph.Timeline('body', 800, 100),
+					events = PG.data.People(data);
+				graph.render(events);
+			});
+		</script>
+	</body>
+</html>
