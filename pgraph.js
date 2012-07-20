@@ -43,7 +43,7 @@ PG.data.People = function (data) {
     var events = d3.values(data.assembly).map(function (d) {
         var s = startDates(d.assembly_no),
             e = endDates(d.assembly_no);
-        if (d.votenum) {
+        if (d.elected) {
             return [
                 PG.INTERVAL,
                 s,
