@@ -2,8 +2,6 @@
 var pass = function () {};
 
 window.PG = {
-    EVENT: 1,
-    INTERVAL: 2,
     data: {},
     graph: {}
 };
@@ -13,97 +11,6 @@ PG.MIN = 60 * PG.SEC;
 PG.HOUR = 60 * PG.MIN;
 PG.DAY = 24 * PG.HOUR;
 PG.YEAR = 365 * PG.DAY;
-
-PG.data.People = function (data) {
-
-    function convDateFunc(dates) {
-        return function (assembly_no) {
-            var date = dates[assembly_no];
-            return (new Date(date)).getTime();
-        }
-    }
-
-    // FIXME: 국회 기간 데이터 하드코딩 없애기
-    var _startDates = {
-            '1': '31 May 1948',
-            '2': '31 May 1950',
-            '3': '31 May 1954',
-            '4': '31 May 1958',
-            '5': '29 Jul 1960',
-            '6': '17 Dec 1963',
-            '7': '1 Jul 1967',
-            '8': '26 Jul 1971',
-            '9': '12 Mar 1973',
-            '10': '17 Mar 1979',
-            '11': '11 Apr 1981',
-            '12': '13 May 1985',
-            '13': '30 May 1988',
-            '14': '30 May 1992',
-            '15': '30 May 1996',
-            '16': '5 Jun 2000',
-            '17': '30 May 2004',
-            '18': '30 May 2008',
-            '19': '30 May 2012'
-        },
-        _endDates = {
-            '1': '30 May 1950',
-            '2': '30 May 1954',
-            '3': '30 May 1958',
-            '4': '30 May 1960',
-            '5': '16 May 1961',
-            '6': '30 Jun 1967',
-            '7': '25 Jul 1971',
-            '8': '18 Oct 1972',
-            '9': '16 Mar 1979',
-            '10': '27 Oct 1980',
-            '11': '12 May 1985',
-            '12': '29 May 1988',
-            '13': '29 May 1992',
-            '14': '29 May 1996',
-            '15': '4 Jun 2000',
-            '16': '29 May 2004',
-            '17': '29 May 2008',
-            '18': '29 May 2012',
-            '19': '29 May 2016'
-        },
-        startDates = convDateFunc(_startDates),
-        endDates = convDateFunc(_endDates),
-        birthDate = (new Date(data.birthyear,
-                             (data.birthmonth || 1) - 1,
-                             data.birthday || 1)).getTime();
-
-    // 국회 출마/당선
-    // FIXME: event model 작성
-    var events = d3.values(data.assembly).map(function (d) {
-        var s = startDates(d.assembly_no),
-            e = endDates(d.assembly_no);
-        if (d.elected) {
-            return [
-                PG.INTERVAL,
-                s,
-                e,
-                d.assembly_no + '대 당선'
-            ];
-        } else {
-            return [
-                PG.EVENT,
-                s,
-                s,
-                d.assembly_no + '대 낙선'
-            ];
-        }
-    });
-
-    // 출생일
-    events.push([
-        PG.EVENT,
-        birthDate,
-        birthDate,
-        '출생'
-    ]);
-
-    return events;
-};
 
 PG.graph.Timeline = function(target, width, height) {
     return new Timeline(target, width, height);
@@ -124,11 +31,22 @@ Timeline.prototype = {
     BAR_HEIGHT: 30,
     EVENT_R: 4,
 
+    isEvent: function (e) {
+        return e[0] === e[1];
+    },
+
+    isInterval: function (e) {
+        return e[0] !== e[1];
+    },
+
     render: function (data) {
-        var minX = d3.min(data, function (d) { return d[1]; }),
-            maxX = d3.max(data, function (d) { return d[2]; }),
-            events = data.filter(function (d) { return d[0] === PG.EVENT; }),
-            intervals = data.filter(function (d) { return d[0] === PG.INTERVAL; });
+        data = d3.values(data).map(function (d) {
+            return [new Date(d[0]).getTime(), new Date(d[1]).getTime(), d[2]];
+        });
+        var minX = d3.min(data, function (d) { return d[0]; }),
+            maxX = d3.max(data, function (d) { return d[1]; }),
+            events = data.filter(this.isEvent),
+            intervals = data.filter(this.isInterval);
 
         this.xScale = d3.scale.linear().nice()
                         .domain([minX - PG.YEAR, maxX + PG.YEAR])
@@ -151,13 +69,13 @@ Timeline.prototype = {
             .append('line')
             .classed('event', true)
             .attr('x1', function (d) {
-                return that.xScale(d[1]) - 0.5;
+                return that.xScale(d[0]) - 0.5;
             })
             .attr('y1', function (d) {
                 return that.yScale(that.BAR_HEIGHT / 2);
             })
             .attr('x2', function (d) {
-                return that.xScale(d[1]) - 0.5;
+                return that.xScale(d[0]) - 0.5;
             })
             .attr('y2', function (d) {
                 return that.yScale(that.height);
@@ -170,7 +88,7 @@ Timeline.prototype = {
             .append('circle')
             .classed('event', true)
             .attr('cx', function (d) {
-                return that.xScale(d[1]) - 0.5;
+                return that.xScale(d[0]) - 0.5;
             })
             .attr('cy', function (d) {
                 return that.yScale(that.height) - 0.5;
@@ -187,13 +105,13 @@ Timeline.prototype = {
             .append('rect')
             .classed('interval', true)
             .attr('x', function (d) {
-                return that.xScale(d[1]) - 0.5;
+                return that.xScale(d[0]) - 0.5;
             })
             .attr('y', function (d) {
                 return that.yScale(that.height / 2) + 0.5;
             })
             .attr('width', function (d) {
-                return that.xScale(d[2]) - that.xScale(d[1]);
+                return that.xScale(d[1]) - that.xScale(d[0]);
             })
             .attr('height', that.BAR_HEIGHT);
     },
@@ -206,15 +124,15 @@ Timeline.prototype = {
             .append("text")
             .classed('event-label', true)
             .text(function (d) {
-                return d[3];
+                return d[2];
             })
             .attr("x", function (d) {
-                return (that.xScale(d[2]) + that.xScale(d[1])) / 2;
+                return (that.xScale(d[1]) + that.xScale(d[0])) / 2;
             })
             .attr("y", function (d) {
-                if (d[0] == PG.EVENT) {
+                if (that.isEvent(d)) {
                     return that.yScale(0);
-                } else if (d[0] == PG.INTERVAL) {
+                } else if (that.isInterval(d)) {
                     return that.yScale(that.height - that.BAR_HEIGHT / 2);
                 }
             })
