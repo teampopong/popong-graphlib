@@ -118,25 +118,29 @@ Timeline.prototype = {
 
     renderLabels: function (data) {
         var that = this;
-        this.svg.selectAll("text")
+        this.svg.selectAll("foreignObject")
             .data(data)
             .enter()
-            .append("text")
+            .append("foreignObject")
             .classed('event-label', true)
-            .text(function (d) {
-                return d[2];
-            })
             .attr("x", function (d) {
-                return (that.xScale(d[1]) + that.xScale(d[0])) / 2;
+                var width = Math.max(30, that.xScale(d[1]) - that.xScale(d[0]));
+                return (that.xScale(d[1]) + that.xScale(d[0]) - width) / 2;
             })
             .attr("y", function (d) {
                 if (that.isEvent(d)) {
-                    return that.yScale(0);
+                    return that.yScale(0) - 5;
                 } else if (that.isInterval(d)) {
-                    return that.yScale(that.height - that.BAR_HEIGHT / 2);
+                    return that.yScale(that.height - that.BAR_HEIGHT / 2) - 15;
                 }
             })
-            .style('text-anchor', 'middle');
+            .attr('width', function (d) {
+                return Math.max(30, that.xScale(d[1]) - that.xScale(d[0]));
+            })
+            .append('xhtml:body')
+            .text(function (d) {
+                return d[2];
+            });
     },
 
     renderAxis: function () {
