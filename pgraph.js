@@ -138,7 +138,7 @@ Timeline.prototype = {
                 return Math.max(30, that.xScale(d[1]) - that.xScale(d[0]));
             })
             .append('xhtml:body')
-            .text(function (d) {
+            .html(function (d) {
                 return d[2];
             });
     },
