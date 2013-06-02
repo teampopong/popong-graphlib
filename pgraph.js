@@ -29,6 +29,7 @@ function Timeline(target, width, height) {
 Timeline.prototype = {
     PADDING: 20,
     BAR_HEIGHT: 30,
+    LINE_HEIGHT: 12,
     EVENT_R: 4,
 
     isEvent: function (e) {
@@ -118,29 +119,36 @@ Timeline.prototype = {
 
     renderLabels: function (data) {
         var that = this;
-        this.svg.selectAll("foreignObject")
-            .data(data)
+
+        var splitted = [];
+        $.each(data, function (i, d) {
+            var tokens = d[2].split('\n');
+            $.each(tokens, function (i, token) {
+                splitted.push([d[0], d[1], token, i * that.LINE_HEIGHT]);
+            });
+        });
+
+        this.svg.selectAll("text")
+            .data(splitted)
             .enter()
-            .append("foreignObject")
+            .append("text")
             .classed('event-label', true)
+            .text(function (d) {
+                return d[2];
+            })
             .attr("x", function (d) {
-                var width = Math.max(30, that.xScale(d[1]) - that.xScale(d[0]));
-                return (that.xScale(d[1]) + that.xScale(d[0]) - width) / 2;
+                return (that.xScale(d[1]) + that.xScale(d[0])) / 2;
             })
             .attr("y", function (d) {
+                var base = 0;
                 if (that.isEvent(d)) {
-                    return that.yScale(0) - 5;
+                    base = that.yScale(0);
                 } else if (that.isInterval(d)) {
-                    return that.yScale(that.height - that.BAR_HEIGHT / 2) - 15;
+                    base = that.yScale(that.height - that.BAR_HEIGHT);
                 }
+                return base + d[3];
             })
-            .attr('width', function (d) {
-                return Math.max(30, that.xScale(d[1]) - that.xScale(d[0]));
-            })
-            .append('xhtml:body')
-            .html(function (d) {
-                return d[2];
-            });
+            .style('text-anchor', 'middle');
     },
 
     renderAxis: function () {
