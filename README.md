@@ -1,7 +1,8 @@
 graphlib
 ========
 
-Team POPONG Graphical Library.
+Team POPONG Graphical Library.<br>
+**Pull requests are always welcome.**
 
 
 ## License
