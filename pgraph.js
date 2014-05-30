@@ -28,7 +28,7 @@ function Timeline(target, width, height) {
 
 Timeline.prototype = {
     PADDING: 20,
-    BAR_HEIGHT: 30,
+    BAR_HEIGHT: 40,
     LINE_HEIGHT: 12,
     EVENT_R: 4,
 
@@ -109,7 +109,7 @@ Timeline.prototype = {
                 return that.xScale(d[0]) - 0.5;
             })
             .attr('y', function (d) {
-                return that.yScale(that.height / 2) + 0.5;
+                return that.yScale(that.height / 2) - 10.5;
             })
             .attr('width', function (d) {
                 return that.xScale(d[1]) - that.xScale(d[0]);
@@ -146,7 +146,7 @@ Timeline.prototype = {
                 } else if (that.isInterval(d)) {
                     base = that.yScale(that.height - that.BAR_HEIGHT);
                 }
-                return base + d[3];
+                return base + d[3] - 5;
             })
             .style('text-anchor', 'middle');
     },
